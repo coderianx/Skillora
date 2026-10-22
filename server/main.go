@@ -8,6 +8,7 @@ import (
 
 	"github.com/coderianx/Skillora/server/internal/config"
 	"github.com/coderianx/Skillora/server/internal/handlers/auth"
+	"github.com/coderianx/Skillora/server/internal/handlers/skills"
 	"github.com/coderianx/Skillora/server/internal/middlewares"
 	"github.com/coderianx/Skillora/server/internal/store"
 	"github.com/go-chi/chi/v5"
@@ -69,6 +70,16 @@ func main() {
 
 		r.With(middlewares.RateLimitByIP(10, time.Minute)).
 			Post("/auth/refresh", auth.RefreshHandler)
+
+		r.With(
+			middlewares.RateLimitByIP(10, time.Minute),
+			middlewares.Auth,
+		).Post("/skills", skills.CreateNewSkillHandler)
+
+		r.With(
+			middlewares.RateLimitByIP(10, time.Minute),
+			middlewares.Auth,
+		).Delete("/skills/{id}", skills.DeleteSkillHandler)
 	})
 
 	http.ListenAndServe(*port, router)

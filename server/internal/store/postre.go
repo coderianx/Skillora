@@ -58,5 +58,18 @@ func CreateTables() error {
 		return err
 	}
 
+	_, err = DB.Exec(
+		context.Background(),
+		`
+		CREATE TABLE IF NOT EXISTS skills (
+			id TEXT NOT NULL UNIQUE,
+			user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			title TEXT NOT NULL,
+			description TEXT NOT NULL,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		);
+		`,
+	)
+
 	return nil
 }
